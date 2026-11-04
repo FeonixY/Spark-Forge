@@ -34,7 +34,7 @@ jobs:
           if [ -n "$TAG_SHA" ] && [ "$TAG_SHA" != "null" ]; then
             TAG_DATE=$(gh api "repos/${{ github.repository }}/commits/$TAG_SHA" \
               --jq '.commit.committer.date')
-            git fetch --shallow-since="$TAG_DATE" origin master
+            git fetch --shallow-since="$TAG_DATE" origin main
             git fetch origin tag "$TAG_NAME"
           fi
         env:
