@@ -1,6 +1,6 @@
-# 火花规则引擎 (Spark-Forge)
+# 星火规则引擎 (Spark-Forge)
 
-本仓库是火花的 Forge 分支,默认分支为 `main`。火花的网页对战桥位于 [`forge-web/`](forge-web/README.md),通过 WebSocket 将浏览器接入 Forge 的规则引擎。配套项目为 [Spark-Web](https://github.com/FeonixY/Spark-Web) 和 [Spark-Database](https://github.com/FeonixY/Spark-Database)。
+本仓库是星火的 Forge 分支,默认分支为 `main`。星火的网页对战桥位于 [`forge-web/`](forge-web/README.md),通过 WebSocket 将浏览器接入 Forge 的规则引擎。配套项目为 [Spark-Web](https://github.com/FeonixY/Spark-Web) 和 [Spark-Database](https://github.com/FeonixY/Spark-Database)。
 
 以下保留上游 Forge 项目的说明和署名。
 

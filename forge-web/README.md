@@ -1,7 +1,7 @@
-# forge-web — Forge ↔ WebSocket 桥 (火花 / Spark)
+# forge-web — Forge ↔ WebSocket 桥 (星火 / Spark)
 
 让浏览器用 **Forge 规则引擎**打一局 MTG:服务端跑一局 Constructed(1 个人类玩家经本桥操作 + 1 个 Forge AI),
-把对局状态按火花的 **GameView JSON 契约**推给浏览器,并接收浏览器动作回传给引擎。
+把对局状态按星火的 **GameView JSON 契约**推给浏览器,并接收浏览器动作回传给引擎。
 
 对接前端:`Spark-Web/battle.html`(契约样例见同目录 `mock_gameview.json`)。
 
@@ -23,7 +23,7 @@ export PATH="$JAVA_HOME/bin:/opt/homebrew/opt/maven/bin:$PATH"
 # 最小引擎子集
 mvn -q -pl forge-game,forge-ai -am -DskipTests -Dmaven.test.skip=true compile
 
-# 火花对战桥(会带上 forge-gui / forge-gui-desktop)
+# 星火对战桥(会带上 forge-gui / forge-gui-desktop)
 mvn -pl forge-web -am -DskipTests -Dmaven.test.skip=true compile
 ```
 
