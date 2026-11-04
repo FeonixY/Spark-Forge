@@ -1,9 +1,9 @@
-# forge-web — Forge ↔ WebSocket 桥 (MDC)
+# forge-web — Forge ↔ WebSocket 桥 (火花 / Spark)
 
 让浏览器用 **Forge 规则引擎**打一局 MTG:服务端跑一局 Constructed(1 个人类玩家经本桥操作 + 1 个 Forge AI),
-把对局状态按 MDC 的 **GameView JSON 契约**推给浏览器,并接收浏览器动作回传给引擎。
+把对局状态按火花的 **GameView JSON 契约**推给浏览器,并接收浏览器动作回传给引擎。
 
-对接前端:`MagicDraftCommunity/mdc-web/battle.html`(契约样例见同目录 `mock_gameview.json`)。
+对接前端:`Spark-Web/battle.html`(契约样例见同目录 `mock_gameview.json`)。
 
 ---
 
@@ -23,7 +23,7 @@ export PATH="$JAVA_HOME/bin:/opt/homebrew/opt/maven/bin:$PATH"
 # 最小引擎子集
 mvn -q -pl forge-game,forge-ai -am -DskipTests -Dmaven.test.skip=true compile
 
-# 本桥(会带上 forge-gui / forge-gui-desktop)
+# 火花对战桥(会带上 forge-gui / forge-gui-desktop)
 mvn -pl forge-web -am -DskipTests -Dmaven.test.skip=true compile
 ```
 
@@ -46,7 +46,7 @@ mvn -q -pl forge-web -am exec:java -Dexec.mainClass=forge.web.SmokeTest
 
 - 启动一局 human vs AI,**自动过优先权**(相当于人类一直点 OK),AI 正常出牌。
 - 每次状态变化的 GameView JSON 追加写入 `forge-web/smoke_gameview.jsonl`(每行一条)。
-- 首个快照另存 `forge-web/smoke_first.json`;把它拷成 `mdc-web/mock_gameview.json` 即可用
+- 首个快照另存 `forge-web/smoke_first.json`;把它拷成 `Spark-Web/mock_gameview.json` 即可用
   `battle.html` 直接渲染验证契约。
 - 90 秒墙钟上限或对局结束即停。
 
@@ -180,7 +180,7 @@ future → 各方法走默认),因此**整局能跑到自然 game-over**。启�
 | `DeckParser` | Arena 牌表文本 → Forge `Deck`(用 `DeckRecognizer`);`copyForAi` 造 AI 副本 |
 | `WebMatchServer` | org.java_websocket:**每连接一局**;解析 newgame/action/decide;断线清理 |
 | `BridgeApp` | main:全局初始化 + 起 WS(不预开局) |
-| `SmokeTest` | main:自动应答 + 落盘每步 JSON;`-Dmdc.deck.file=` 可注入牌表 |
+| `SmokeTest` | main:自动应答 + 落盘每步 JSON;`-Dspark.deck.file=` 可注入牌表 |
 
 ### 5.1 每连接独立对局
 - `WebMatchServer` 给每个 WS 连接维护一个 `Session{gui}`。连接建立先推一个 lobby 占位帧,**不开局**。
@@ -197,11 +197,11 @@ future → 各方法走默认),因此**整局能跑到自然 game-over**。启�
 
 ## 6. 前端对接(已接)
 
-`MagicDraftCommunity/mdc-web/battle.html`:
-- 连上先收 lobby 帧 → 弹**开战前面板**:文本框(牌表来源优先级 **URL `?deck=`(base64 或 encodeURIComponent)→ `localStorage["mdc_deck"]` → 空**)+ 「用牌组开战」/「快速对战(默认牌组)」两个入口。
+`Spark-Web/battle.html`:
+- 连上先收 lobby 帧 → 弹**开战前面板**:文本框(牌表来源优先级 **URL `?deck=`(base64 或 encodeURIComponent)→ `localStorage["spark_deck"]` → 空**)+ 「用牌组开战」/「快速对战(默认牌组)」两个入口。
 - 点开战 → `send({id:"newgame",deck})`(快速对战不带 deck)。断线重连自动用上次牌组重新 `newgame`。
 - `actions[]`(pass/play/select)→ `send({id,cardId})`;`decision` 帧 → 决策面板 → `send({id:"decide",reqId,picks,value})`。
-- WS 连不上 → 回退 `mock_gameview.json`(离线预览,跳过开战面板)。轮抽页把导出牌表写进 `localStorage["mdc_deck"]` 后打开本页即可。
+- WS 连不上 → 回退 `mock_gameview.json`(离线预览,跳过开战面板)。轮抽页把导出牌表写进 `localStorage["spark_deck"]` 后打开本页即可。
 
 ---
 
@@ -219,8 +219,8 @@ forge-web/target/forge-web-2.0.15-SNAPSHOT-shaded.jar   (~42MB)
 
 ### 7.2 运行期需要的 res 目录(卡库/版本数据)
 `WebGuiBase.getAssetsDir()` 把资源根定位成 `<assetsDir>/res/`,`RES_DIR = assetsDir + "res/"`。
-定位顺序:`-Dmdc.assetsDir=<dir>` 优先;否则从进程工作目录向上找含 `forge-gui/res` 的目录。
-**部署建议**:把 jar 与一个 `res/` 目录拷到服务器,用 `-Dmdc.assetsDir` 指到 `res` 的父目录。
+定位顺序:`-Dspark.assetsDir=<dir>` 优先;否则从进程工作目录向上找含 `forge-gui/res` 的目录。
+**部署建议**:把 jar 与一个 `res/` 目录拷到服务器,用 `-Dspark.assetsDir` 指到 `res` 的父目录。
 
 **实测可跑一局 Constructed 的最小 res 子集(≈210MB)**——只需这些子目录:
 ```
@@ -235,14 +235,14 @@ lists/  formats/  setlookup/  defaults/  ai/     以及 res 根下的 *.txt
 ### 7.3 启动命令
 ```bash
 # 冒烟(无浏览器,自动应答,跑到 game-over)
-java -Dmdc.assetsDir=/path/to/forge-gui/ -cp forge-web-*-shaded.jar forge.web.SmokeTest
+java -Dspark.assetsDir=/path/to/forge-gui/ -cp forge-web-*-shaded.jar forge.web.SmokeTest
 
 # 起 WS 桥(默认 127.0.0.1:8899,放 nginx 后面)
-java -Dmdc.assetsDir=/path/to/forge-gui/ -jar forge-web-*-shaded.jar
+java -Dspark.assetsDir=/path/to/forge-gui/ -jar forge-web-*-shaded.jar
 # 指定 host/port(三选一;优先级:CLI 参数 > -D 属性 > 环境变量 > 默认)
-java -Dmdc.assetsDir=/path/… -jar forge-web-*-shaded.jar 0.0.0.0 8899
-java -Dmdc.ws.host=0.0.0.0 -Dmdc.ws.port=9000 -Dmdc.assetsDir=/path/… -jar forge-web-*-shaded.jar
-MDC_WS_HOST=0.0.0.0 MDC_WS_PORT=9000 java -Dmdc.assetsDir=/path/… -jar forge-web-*-shaded.jar
+java -Dspark.assetsDir=/path/… -jar forge-web-*-shaded.jar 0.0.0.0 8899
+java -Dspark.ws.host=0.0.0.0 -Dspark.ws.port=9000 -Dspark.assetsDir=/path/… -jar forge-web-*-shaded.jar
+SPARK_WS_HOST=0.0.0.0 SPARK_WS_PORT=9000 java -Dspark.assetsDir=/path/… -jar forge-web-*-shaded.jar
 ```
 > `/path/to/forge-gui/` 是 `res/` 的父目录(即里面有 `res/cardsfolder` 等)。JDK 17 运行。
 
@@ -260,7 +260,7 @@ MDC_WS_HOST=0.0.0.0 MDC_WS_PORT=9000 java -Dmdc.assetsDir=/path/… -jar forge-w
 ## 9. 验证记录
 
 - `mvn -pl forge-web -am -DskipTests package`:通过,产出 `forge-web-2.0.15-SNAPSHOT-shaded.jar`(~42MB,含 card_index.json + 每连接对局 + 牌组注入)。
-- **牌组注入 → game-over**:`SmokeTest -Dmdc.deck.file=<Arena牌表>`,解析 60 张主牌(0 跳过),跑到**自然 game-over**(777 步),对局中只出现注入牌组的卡(Forest/Mountain/Grizzly Bears/Llanowar Elves)。
+- **牌组注入 → game-over**:`SmokeTest -Dspark.deck.file=<Arena牌表>`,解析 60 张主牌(0 跳过),跑到**自然 game-over**(777 步),对局中只出现注入牌组的卡(Forest/Mountain/Grizzly Bears/Llanowar Elves)。
 - **并发/独立**:`BridgeApp` 起一桥,两个 WS 客户端各发不同 `newgame`(绿:Forest+Llanowar / 红:Mountain+Grizzly Bears)——GREEN 只见 Forest,RED 只见 Mountain/Grizzly Bears,**零串场**,各自双回合推进。
 - **`DeckParser`**(独立):Arena 文本 20 Forest+4 Llanowar+4 Bears+2 Growth+Sideboard → main=30/side=3,假名跳过;AI 副本=30。
 - **胖包 `java -jar` BridgeApp**:监听可配 host/port;WS 连上收 lobby 帧→newgame→牌桌,手牌卡带中文/卡图。

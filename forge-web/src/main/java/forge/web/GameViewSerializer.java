@@ -19,11 +19,11 @@ import forge.game.player.PlayerView;
 import forge.game.zone.ZoneType;
 
 /**
- * Maps a Forge {@link GameView} to the MDC browser JSON contract consumed by
- * mdc-web/battle.html. Pure and side-effect free so it can be unit-tested and
+ * Maps a Forge {@link GameView} to the Spark browser JSON contract consumed by
+ * Spark-Web/battle.html. Pure and side-effect free so it can be unit-tested and
  * called from any thread that holds a consistent GameView snapshot.
  *
- * <p>Contract (see mdc-web/mock_gameview.json):
+ * <p>Contract (see Spark-Web/mock_gameview.json):
  * <pre>
  * { you, turn, priority, phase, prompt,
  *   players:[{id,name,life,handCount,libraryCount,graveyardCount,mana{W,U,B,R,G,C},battlefield:[cardRef]}],
@@ -36,7 +36,7 @@ import forge.game.zone.ZoneType;
  * image URL in battle.html needs a Scryfall id, so we emit {@code img:""} and
  * {@code zh:""} for now (id = Forge card id, used only as a stable key). Resolving
  * set/collectorNumber -> Scryfall id (and English -> Chinese) is a documented TODO,
- * to be done against the MDC set_cards table outside the engine.
+ * to be done against the Spark set_cards table outside the engine.
  */
 public final class GameViewSerializer {
     private GameViewSerializer() {}

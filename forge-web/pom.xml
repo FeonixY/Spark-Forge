@@ -11,11 +11,11 @@
     </parent>
 
     <artifactId>forge-web</artifactId>
-    <name>Forge Web Bridge (MDC)</name>
+    <name>Forge Web Bridge (Spark)</name>
     <description>
         WebSocket bridge that runs a headless Forge game (1 human driven from a
         browser + 1 Forge AI) and streams a GameView JSON contract to the browser,
-        feeding browser actions back into the engine. Built for MagicDraftCommunity.
+        feeding browser actions back into the engine. Built for Spark.
     </description>
 
     <dependencies>

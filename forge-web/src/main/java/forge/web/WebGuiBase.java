@@ -36,12 +36,12 @@ public class WebGuiBase extends GuiDesktop {
      * Forge resolves its resource root (card DB, editions, etc.) as
      * {@code getAssetsDir() + "res/"}. GuiDesktop only returns the dev path for
      * "git" version strings, so we pin it explicitly: honor an
-     * {@code -Dmdc.assetsDir=...} override, else locate the sibling
+     * {@code -Dspark.assetsDir=...} override, else locate the sibling
      * {@code forge-gui} directory by walking up from the process working dir.
      */
     @Override
     public String getAssetsDir() {
-        String override = System.getProperty("mdc.assetsDir");
+        String override = System.getProperty("spark.assetsDir");
         if (override != null && !override.isEmpty()) {
             return override.endsWith("/") ? override : override + "/";
         }

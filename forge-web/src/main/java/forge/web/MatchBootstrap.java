@@ -50,7 +50,7 @@ public final class MatchBootstrap {
 
     /** Default deck when a connection starts a game without providing a decklist. */
     public static Deck defaultDeck() {
-        Deck d = new Deck("MDC Default");
+        Deck d = new Deck("火花默认套牌");
         d.getMain().add("Forest", 34);
         d.getMain().add("Grizzly Bears", 26);
         return d;

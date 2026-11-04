@@ -29,7 +29,7 @@ public final class SmokeTest {
     public static void main(String[] args) throws Exception {
         System.setProperty("java.awt.headless", "true");
 
-        final Path outDir = Paths.get(System.getProperty("mdc.smoke.dir", "forge-web"));
+        final Path outDir = Paths.get(System.getProperty("spark.smoke.dir", "forge-web"));
         Files.createDirectories(outDir);
         final Path jsonl = outDir.resolve("smoke_gameview.jsonl");
         final Path first = outDir.resolve("smoke_first.json");
@@ -51,9 +51,9 @@ public final class SmokeTest {
                 if (n % 20 == 0) System.out.println("[smoke] pushes=" + n);
             });
 
-            // Optional injected deck: -Dmdc.deck.file=<Arena decklist path>
+            // Optional injected deck: -Dspark.deck.file=<Arena decklist path>
             forge.deck.Deck injected = null;
-            String deckFile = System.getProperty("mdc.deck.file");
+            String deckFile = System.getProperty("spark.deck.file");
             if (deckFile != null && !deckFile.isBlank()) {
                 MatchBootstrap.ensureInitialized(); // card DB before parsing
                 String text = Files.readString(Paths.get(deckFile));
@@ -64,7 +64,7 @@ public final class SmokeTest {
             System.out.println("[smoke] match started; auto-playing...");
 
             long deadline = System.currentTimeMillis() + 90_000; // 90s wall-clock cap
-            int maxPushes = Integer.getInteger("mdc.smoke.maxPushes", 600); // keep artifact small
+            int maxPushes = Integer.getInteger("spark.smoke.maxPushes", 600); // keep artifact small
             int lastEpoch = -1;
             int idleTicks = 0;
             while (System.currentTimeMillis() < deadline) {

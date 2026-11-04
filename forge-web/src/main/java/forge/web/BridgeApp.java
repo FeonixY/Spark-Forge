@@ -2,15 +2,15 @@ package forge.web;
 
 /**
  * Entry point: start a headless human-vs-AI Forge game and expose it over
- * WebSocket for the browser client (mdc-web/battle.html).
+ * WebSocket for the browser client (Spark-Web/battle.html).
  *
  * <p>Run from the fat jar:
  * <pre>
  *   java -jar forge-web-*-shaded.jar                 # 127.0.0.1:8899 (behind nginx)
  *   java -jar forge-web-*-shaded.jar 0.0.0.0 8899    # host port as args
- *   java -Dmdc.ws.host=0.0.0.0 -Dmdc.ws.port=9000 -jar forge-web-*-shaded.jar
- *   MDC_WS_HOST=0.0.0.0 MDC_WS_PORT=9000 java -jar forge-web-*-shaded.jar
- *   # card DB: point at the res parent with -Dmdc.assetsDir=/path/to/forge-gui/
+ *   java -Dspark.ws.host=0.0.0.0 -Dspark.ws.port=9000 -jar forge-web-*-shaded.jar
+ *   SPARK_WS_HOST=0.0.0.0 SPARK_WS_PORT=9000 java -jar forge-web-*-shaded.jar
+ *   # card DB: point at the res parent with -Dspark.assetsDir=/path/to/forge-gui/
  * </pre>
  *
  * Config precedence for host/port: CLI args &gt; system property &gt; env var &gt; default.
@@ -26,13 +26,13 @@ public final class BridgeApp {
 
         String host = firstNonEmpty(
                 args.length > 0 ? args[0] : null,
-                System.getProperty("mdc.ws.host"),
-                System.getenv("MDC_WS_HOST"),
+                System.getProperty("spark.ws.host"),
+                System.getenv("SPARK_WS_HOST"),
                 "127.0.0.1");
         int port = parsePort(firstNonEmpty(
                 args.length > 1 ? args[1] : null,
-                System.getProperty("mdc.ws.port"),
-                System.getenv("MDC_WS_PORT"),
+                System.getProperty("spark.ws.port"),
+                System.getenv("SPARK_WS_PORT"),
                 "8899"), 8899);
 
         // Load the card DB once, up front, so the first connection doesn't pay for it.
